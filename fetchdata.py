@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-import re
 import csv
 import pandas as pd
 
@@ -70,20 +69,27 @@ def fetchdata(url):
         ratelist.append(rate.string)
     data.append(ratelist)
     # print(ratelist)
-    # #获取评价人数
+    # 获取评价人数
     ratenum = []
     for num in soup.find_all('span','pl'):
         ratenum.append(num.string)
     data.append(ratenum)
     # print(ratenum)
+    # 获取URL
+    urllist = []
+    for info in soup.find_all('a', 'nbg'):
+        urllist.append(info.get('href'))
+    data.append(urllist)
+
     data = pd.DataFrame(data)
     data = data.T
     # print(data)
     return data
 
+
 def savecsv():
     filename = input('请输入文件名：')
-    csvheaders = ['封面', '标题', '出版信息', '评分', '评价人数']
+    csvheaders = ['封面', '标题', '出版信息', '评分', '评价人数','URL']
     with open(filename,'w') as f:
         f_csv = csv.writer(f)
         f_csv.writerow(csvheaders)
